@@ -51,6 +51,7 @@
 	</dependencies>
 
 	<repositories>
+		<repository>
 			<id>snapshots</id>
 			<url>https://server.rsmaxwell.co.uk/archiva/repository/snapshots</url>
 			<snapshots>
