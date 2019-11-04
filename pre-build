@@ -5,13 +5,14 @@ set -x
 url="https://server.rsmaxwell.co.uk/archiva/repository"
 
 groupId="com.rsmaxwell.utilities"
-artifactId="utilities-test"
 packaging="jar"
 
+
 utilities_artifactId="utilities"
+utilities_test_artifactId="utilities-test"
 
 #*****************************************************************
-# Find the latest version of 'utilities'
+# Find the latest version of 'utilities-test'
 #*****************************************************************
 currentdir=$(pwd)
 result=$?
@@ -50,7 +51,7 @@ cat << EOT > pom.xml
 	<dependencies>
 		<dependency>
 			<groupId>${groupId}</groupId>
-			<artifactId>${utilities_artifactId}</artifactId>
+			<artifactId>${utilities_test_artifactId}</artifactId>
 			<version>1</version>
 		</dependency>
 	</dependencies>
@@ -88,7 +89,7 @@ line=$(tail -1 temp.txt)
 regex="<version>(.*)</version>"
 if [[ ${line} =~ ${regex} ]]
 then
-    utilities_version="${BASH_REMATCH[1]}"
+    utilities_test_version="${BASH_REMATCH[1]}"
 else
     echo "$0[${LINENO}]"
     echo "result = $result"
@@ -112,25 +113,10 @@ if [ ! $result == 0 ]; then
 fi
 
 #*****************************************************************
-# Make this project depend on the latest version of 'utils'
+# Replace tags in the pom
 #*****************************************************************
-TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-    
-find . -name "Version.java" | while read versionfile; do
-
-    echo "Replacing tags in ${versionfile}"
-    
-    sed -i "s@<UTILITIES_TEST_VERSION>@${BUILD_ID}@g"     ${versionfile}
-    sed -i "s@<BUILD_DATE>@${TIMESTAMP}@g"                ${versionfile}
-    sed -i "s@<GIT_COMMIT>@${GIT_COMMIT}@g"               ${versionfile}
-    sed -i "s@<GIT_BRANCH>@${GIT_BRANCH}@g"               ${versionfile}
-    sed -i "s@<GIT_URL>@${GIT_URL}@g"                     ${versionfile}
-    sed -i "s@<UTILITIES_VERSION>@${utilities_version}@g" ${versionfile}
-done
-
 mvn versions:set -DnewVersion=${BUILD_ID}
-mvn versions:use-dep-version -DdepVersion=${utilities_version} -Dincludes=com.rsmaxwell.utilities:utilities
-mvn versions:use-latest-releases
-mvn dependency:get -DgroupId=${groupId//.//} -DartifactId=${artifactId} -Dversion=${utilities_version} -Dpackaging=${packaging} -DremoteRepositories=${url}
+mvn versions:use-dep-version -DdepVersion=${utilities_test_version} -Dincludes=com.rsmaxwell.utilities:${utilities_test_artifactId}
 
-mvn exec:exec
+echo "Running utilities-test"
+mvn -e -X exec:exec

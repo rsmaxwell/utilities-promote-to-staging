@@ -43,10 +43,14 @@
 			<artifactId>utilities</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.rsmaxwell.utilities</groupId>
+			<artifactId>utilities-test</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
-		<repository>
 			<id>snapshots</id>
 			<url>https://server.rsmaxwell.co.uk/archiva/repository/snapshots</url>
 			<snapshots>
@@ -60,13 +64,6 @@
 				<updatePolicy>always</updatePolicy>
 			</releases>
 		</repository>
-		<repository>
-			<id>staging</id>
-			<url>https://server.rsmaxwell.co.uk/archiva/repository/staging</url>
-			<snapshots>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
 	</repositories>
 
 	<distributionManagement>
@@ -75,8 +72,8 @@
 			<url>https://server.rsmaxwell.co.uk/archiva/repository/snapshots</url>
 		</snapshotRepository>
 		<repository>
-			<id>internal</id>
-			<url>https://server.rsmaxwell.co.uk/archiva/repository/internal</url>
+			<id>staging</id>
+			<url>https://server.rsmaxwell.co.uk/archiva/repository/staging</url>
 		</repository>
 	</distributionManagement>
 
