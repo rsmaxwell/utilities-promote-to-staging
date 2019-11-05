@@ -1,0 +1,180 @@
+#!/bin/bash
+
+#**************************************************************
+# Find the latest version of 'utilities-test'
+#**************************************************************
+rm -rf /tmp/latest-* stdout.txt stderr.txt
+
+tempdir=$(mktemp -d -t latest-XXXXXXXXXX)
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
+
+currentdir=$(pwd)
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
+
+cd ${tempdir}
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
+
+pom="pom.xml"
+cat >${pom} <<'EOT'
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>junk</groupId>
+	<artifactId>junk</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.rsmaxwell.utilities</groupId>
+			<artifactId>utilities-test</artifactId>
+			<version>1</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>internal</id>
+			<url>https://server.rsmaxwell.co.uk/archiva/repository/internal</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>staging</id>
+			<url>https://server.rsmaxwell.co.uk/archiva/repository/staging</url>
+		</repository>
+	</distributionManagement>
+
+</project>
+EOT
+
+mvn versions:use-latest-releases 1>stdout.txt 2>stderr.txt
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    echo "----[ stdout ]--------------------------"
+    cat stdout.txt
+    echo "----[ stderr ]--------------------------"
+    cat stderr.txt
+    echo "----------------------------------------"
+    exit 1
+fi
+
+line=$(grep "<version>" pom.xml | head -n 2 | tail -n 1)
+if [ ${#line} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    exit 1
+fi
+
+regex="<version>(.*)</version>"
+if [[ ! ${line} =~ ${regex} ]]; then
+    echo "Error: $0[${LINENO}]"
+    exit 1
+fi
+
+utilities_test_version="${BASH_REMATCH[1]}"
+echo "utilities_test_version: ${utilities_test_version}"
+
+mvn dependency:resolve 1>stdout.txt 2>stderr.txt
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    echo "----[ stdout ]--------------------------"
+    cat stdout.txt
+    echo "----[ stderr ]--------------------------"
+    cat stderr.txt
+    echo "----------------------------------------"
+    exit 1
+fi
+
+cd ${currentdir}
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
+
+rm -rf ${tempdir}
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
+
+#**************************************************************
+# Find the version of 'utilities' that 'utilities-test' was built with
+#**************************************************************
+GROUPID="com.rsmaxwell.utilities"
+ARTIFACTID="utilities-test"
+VERSION="${utilities_test_version}"
+PACKAGING="jar"
+
+jarfile=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID}/${VERSION}/${ARTIFACTID}-${VERSION}.${PACKAGING}
+if [ ! -f ${jarfile} ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    echo "jarfile not found: ${jarfile}"
+    exit 1
+fi
+
+versionjson=$(java -cp ${jarfile} com.rsmaxwell.utilities_test.Version)
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
+
+utilities_version=$(echo ${versionjson} | jq .utilities_version)
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
+
+pathname="${HOME}/workspace/utilities-promote-to-staging/version"
+cat >${pathname} <<EOT2
+export utilities_test_version=${utilities_test_version}
+export utilities_version=${utilities_version}
+EOT2
+
+#**************************************************************
+# Resolve the version of 'utilities' needed for testing
+#**************************************************************
+GROUPID="com.rsmaxwell.utilities"
+ARTIFACTID="utilities"
+VERSION="${utilities_version}"
+PACKAGING="jar"
+
+mvn dependency:get -Dartifact=${GROUPID}:${ARTIFACTID}:${VERSION} 1>stdout.txt 2>stderr.txt
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    echo "----[ stdout ]--------------------------"
+    cat stdout.txt
+    echo "----[ stderr ]--------------------------"
+    cat stderr.txt
+    echo "----------------------------------------"
+    exit 1
+fi

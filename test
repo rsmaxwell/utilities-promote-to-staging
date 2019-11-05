@@ -1,5 +1,34 @@
 #!/bin/bash
 
-set -x
+#**************************************************************
+# Get the versions
+#**************************************************************
+. ./version
 
-mvn -e -X exec:exec
+#**************************************************************
+# Run the test
+#**************************************************************
+GROUPID="com.rsmaxwell.utilities"
+PACKAGING="jar"
+
+ARTIFACTID1="utilities-test"
+VERSION1="${utilities_test_version}"
+
+ARTIFACTID2="utilities"
+VERSION2="${utilities_version}"
+
+jarfile1=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID1}/${VERSION1}/${ARTIFACTID1}-${VERSION2}.${PACKAGING}
+jarfile2=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID2}/${VERSION2}/${ARTIFACTID2}-${VERSION2}.${PACKAGING}
+
+java -cp ${jarfile1}:${jarfile2} com.rsmaxwell.utilities_test.Test 1>stdout.txt 2>stderr.txt
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    echo "----[ stdout ]--------------------------"
+    cat stdout.txt
+    echo "----[ stderr ]--------------------------"
+    cat stderr.txt
+    echo "----------------------------------------"
+    exit 1
+fi
