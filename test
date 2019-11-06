@@ -11,7 +11,7 @@
 GROUPID="com.rsmaxwell.utilities"
 PACKAGING="jar"
 
-ARTIFACTID1="utilities-test"
+ARTIFACTID1="utilities-staging-test"
 VERSION1="${utilities_staging_test_version}"
 
 ARTIFACTID2="utilities"
