@@ -121,10 +121,10 @@ if [ ! ${result} == 0 ]; then
 fi
 
 #**************************************************************
-# Find the version of 'utilities' that 'utilities-test' was built with
+# Find the version of 'utilities' that 'utilities-staging-test' was built with
 #**************************************************************
 GROUPID="com.rsmaxwell.utilities"
-ARTIFACTID="utilities-test"
+ARTIFACTID="utilities-staging-test"
 VERSION="${utilities_staging_test_version}"
 PACKAGING="jar"
 
