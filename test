@@ -18,7 +18,20 @@ ARTIFACTID2="utilities"
 VERSION2="${utilities_version}"
 
 jarfile1=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID1}/${VERSION1}/${ARTIFACTID1}-${VERSION2}.${PACKAGING}
+if [ ! -f ${jarfile1} ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    echo "jarfile not found: ${jarfile1}"
+    exit 1
+fi
+
 jarfile2=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID2}/${VERSION2}/${ARTIFACTID2}-${VERSION2}.${PACKAGING}
+if [ ! -f ${jarfile2} ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    echo "jarfile not found: ${jarfile2}"
+    exit 1
+fi
 
 java -cp ${jarfile1}:${jarfile2} com.rsmaxwell.utilities_test.Test 1>stdout.txt 2>stderr.txt
 result=$?
