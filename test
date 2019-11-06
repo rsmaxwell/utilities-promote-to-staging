@@ -12,7 +12,7 @@ GROUPID="com.rsmaxwell.utilities"
 PACKAGING="jar"
 
 ARTIFACTID1="utilities-test"
-VERSION1="${utilities_test_version}"
+VERSION1="${utilities_staging_test_version}"
 
 ARTIFACTID2="utilities"
 VERSION2="${utilities_version}"

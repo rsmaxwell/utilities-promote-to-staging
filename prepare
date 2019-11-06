@@ -41,7 +41,7 @@ cat >${pom} <<'EOT'
 	<dependencies>
 		<dependency>
 			<groupId>com.rsmaxwell.utilities</groupId>
-			<artifactId>utilities-test</artifactId>
+			<artifactId>utilities-staging-test</artifactId>
 			<version>1</version>
 		</dependency>
 	</dependencies>
@@ -88,8 +88,8 @@ if [[ ! ${line} =~ ${regex} ]]; then
     exit 1
 fi
 
-utilities_test_version="${BASH_REMATCH[1]}"
-echo "utilities_test_version: ${utilities_test_version}"
+utilities_staging_test_version="${BASH_REMATCH[1]}"
+echo "utilities_staging_test_version: ${utilities_staging_test_version}"
 
 mvn dependency:resolve 1>stdout.txt 2>stderr.txt
 result=$?
@@ -125,7 +125,7 @@ fi
 #**************************************************************
 GROUPID="com.rsmaxwell.utilities"
 ARTIFACTID="utilities-test"
-VERSION="${utilities_test_version}"
+VERSION="${utilities_staging_test_version}"
 PACKAGING="jar"
 
 jarfile=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID}/${VERSION}/${ARTIFACTID}-${VERSION}.${PACKAGING}
@@ -154,7 +154,7 @@ fi
 
 pathname="./version"
 cat >${pathname} <<EOT2
-export utilities_test_version=${utilities_test_version}
+export utilities_staging_test_version=${utilities_staging_test_version}
 export utilities_version=${utilities_version}
 EOT2
 
