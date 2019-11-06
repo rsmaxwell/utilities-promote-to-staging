@@ -17,7 +17,7 @@ VERSION1="${utilities_test_version}"
 ARTIFACTID2="utilities"
 VERSION2="${utilities_version}"
 
-jarfile1=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID1}/${VERSION1}/${ARTIFACTID1}-${VERSION2}.${PACKAGING}
+jarfile1=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID1}/${VERSION1}/${ARTIFACTID1}-${VERSION1}.${PACKAGING}
 if [ ! -f ${jarfile1} ]; then
     echo "Error: $0[${LINENO}]"
     echo "result: ${result}"
