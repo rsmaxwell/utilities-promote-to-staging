@@ -18,16 +18,28 @@ VERSION=${utilities_version}
 PACKAGING="jar"
 
 URL=${REPOSITORY_URL}/${REPOSITORY}/
-FILENAME=${JOB_NAME}-${GOARCH}-${GOOS}-${BUILD_ID}.${PACKAGING}
 
-cd ${WORKSPACE}/bin
-zip ${FILENAME} *
+filename=${ARTIFACTID}-${VERSION}.${PACKAGING}
+pathfile=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID}/${VERSION}/${filename}
+if [ ! -f ${pathfile} ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
+
+cp ${jarfile} .
+result=$?
+if [ ! ${result} == 0 ]; then
+    echo "Error: $0[${LINENO}]"
+    echo "result: ${result}"
+    exit 1
+fi
 
 mvn --batch-mode deploy:deploy-file \
 	-DgroupId=${GROUPID} \
 	-DartifactId=${ARTIFACTID} \
 	-Dversion=${VERSION} \
 	-Dpackaging=${PACKAGING} \
-	-Dfile=${FILENAME} \
+	-Dfile=${filename} \
 	-DrepositoryId=${REPOSITORYID} \
 	-Durl=${URL}

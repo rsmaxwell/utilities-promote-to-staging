@@ -3,7 +3,7 @@
 #**************************************************************
 # Find the latest version of 'utilities-test'
 #**************************************************************
-rm -rf /tmp/latest-* stdout.txt stderr.txt
+rm -rf /tmp/latest-* stdout.txt stderr.txt utilities-*.jar
 
 tempdir=$(mktemp -d -t latest-XXXXXXXXXX)
 result=$?
