@@ -20,14 +20,14 @@ PACKAGING="jar"
 URL=${REPOSITORY_URL}/${REPOSITORY}/
 
 filename=${ARTIFACTID}-${VERSION}.${PACKAGING}
-pathfile=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID}/${VERSION}/${filename}
-if [ ! -f ${pathfile} ]; then
+pathname=${HOME}/.m2/repository/${GROUPID//.//}/${ARTIFACTID}/${VERSION}/${filename}
+if [ ! -f ${pathname} ]; then
     echo "Error: $0[${LINENO}]"
     echo "result: ${result}"
     exit 1
 fi
 
-cp ${jarfile} .
+cp ${pathname} .
 result=$?
 if [ ! ${result} == 0 ]; then
     echo "Error: $0[${LINENO}]"
